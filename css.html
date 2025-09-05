@@ -1,0 +1,183 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hover-Reveal Card — CSS Transition</title>
+  <style>
+    :root {
+      --bg: #0f172a;          /* slate-900 */
+      --card: #111827;        /* gray-900 */
+      --card-2: #0b1220;      
+      --text: #e5e7eb;        /* gray-200 */
+      --muted: #9ca3af;       /* gray-400 */
+      --accent: #60a5fa;      /* blue-400 */
+      --ring: rgba(96, 165, 250, 0.45);
+      --radius: 16px;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+    }html, body { height: 100%; }
+body {
+  margin: 0;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  background: radial-gradient(1200px 800px at 10% 10%, #0b1220, var(--bg));
+  color: var(--text);
+  display: grid;
+  place-items: center;
+  padding: 32px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 28px;
+  width: min(100%, 1100px);
+}
+
+.card {
+  background: linear-gradient(180deg, var(--card), var(--card-2));
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden; /* clip the reveal */
+  border: 1px solid rgba(255,255,255,.06);
+  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+  position: relative;
+  isolation: isolate;
+}
+.card:hover { transform: translateY(-2px); box-shadow: 0 14px 36px rgba(0,0,0,.45); }
+
+.card:focus-within { outline: none; box-shadow: 0 0 0 3px var(--ring), var(--shadow); }
+
+.media { aspect-ratio: 16/9; width: 100%; display: block; object-fit: cover; filter: saturate(1.05); }
+
+.content { padding: 16px 16px 6px; }
+.title { margin: 0 0 6px; font-size: 1.05rem; letter-spacing: .2px; }
+.meta { margin: 0; color: var(--muted); font-size: .9rem; }
+
+/* --- Reveal section --- */
+.interact { display: flex; align-items: center; gap: 10px; padding: 10px 16px 16px; }
+.cta { 
+  padding: 10px 12px; border-radius: 999px; border: 1px solid rgba(255,255,255,.12);
+  color: var(--text); background: transparent; cursor: pointer; text-decoration: none;
+  font-size: .92rem; line-height: 1; display: inline-flex; align-items: center; gap: 8px;
+}
+.cta:hover { border-color: rgba(255,255,255,.25); }
+
+.details {
+  --reveal-max: 260px; /* adjust if your details get cut off */
+  max-height: 0; /* start hidden */
+  opacity: 0;
+  transform: translateY(8px);
+  transition: max-height .45s ease, opacity .35s ease, transform .35s ease;
+  padding: 0 16px; /* will be removed when hidden using padding-block */
+  padding-block: 0; /* collapse vertical padding when hidden */
+}
+
+.card:hover .details,
+.card:focus-within .details,
+.expander:checked ~ .details { /* touch toggle */
+  max-height: var(--reveal-max);
+  opacity: 1;
+  transform: translateY(0);
+  padding-block: 14px; /* show vertical padding when revealed */
+}
+
+.details p { color: var(--muted); margin: 0 0 10px; line-height: 1.55; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { font-size: .8rem; padding: 6px 10px; border-radius: 999px; border: 1px dashed rgba(255,255,255,.18); color: var(--text); }
+
+/* Touch-friendly toggle only visible on non-hover devices */
+.toggle { display: none; }
+.expander { position: absolute; inset: 0; opacity: 0; pointer-events: none; }
+
+@media (hover: none) {
+  .toggle { display: inline-flex; margin: 10px 16px 0; }
+  .expander { pointer-events: auto; } /* allow tapping anywhere to toggle */
+  .card { cursor: pointer; }
+}
+
+/* Respect reduced motion users */
+@media (prefers-reduced-motion: reduce) {
+  .card, .details { transition: none; }
+}
+
+  </style>
+</head>
+<body>
+  <div class="grid"><!-- Card 1 -->
+<article class="card" tabindex="0" aria-label="Course: Intro to Data Science">
+  <img class="media" src="https://images.unsplash.com/photo-1556157382-97eda2d62296?q=80&w=1200&auto=format&fit=crop" alt="Laptop with charts on the screen" />
+
+  <!-- Touch devices: invisible checkbox toggles reveal; on desktop, hover/focus reveal works -->
+  <input class="expander" id="expander-1" type="checkbox" aria-hidden="true" />
+
+  <div class="content">
+    <h3 class="title">Intro to Data Science</h3>
+    <p class="meta">Beginner • 12 lessons • ~6h</p>
+  </div>
+
+  <a class="toggle cta" href="#expander-1" onclick="return false" aria-controls="expander-1" aria-label="Toggle details">Tap to view details</a>
+
+  <div class="details" role="region" aria-label="Additional details">
+    <p>Build a solid foundation in Python, statistics, and visualization. Includes hands‑on labs and mini projects to cement each concept.</p>
+    <div class="chips">
+      <span class="chip">Python</span>
+      <span class="chip">Pandas</span>
+      <span class="chip">Matplotlib</span>
+      <span class="chip">EDA</span>
+    </div>
+  </div>
+
+  <div class="interact">
+    <a class="cta" href="#">Preview</a>
+    <a class="cta" href="#">Enroll</a>
+  </div>
+</article>
+
+<!-- Card 2 -->
+<article class="card" tabindex="0" aria-label="Package: Weekend Getaway">
+  <img class="media" src="https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=1200&auto=format&fit=crop" alt="Scenic mountain landscape" />
+  <input class="expander" id="expander-2" type="checkbox" aria-hidden="true" />
+  <div class="content">
+    <h3 class="title">Weekend Getaway</h3>
+    <p class="meta">2 nights • Breakfast included</p>
+  </div>
+  <a class="toggle cta" href="#expander-2" onclick="return false" aria-controls="expander-2" aria-label="Toggle details">Tap to view details</a>
+  <div class="details" role="region" aria-label="Additional details">
+    <p>Stay at a cozy hillside resort with a guided sunrise hike and complimentary spa access. Free cancellation up to 48 hours.</p>
+    <div class="chips">
+      <span class="chip">Free Wi‑Fi</span>
+      <span class="chip">Spa</span>
+      <span class="chip">Hike</span>
+    </div>
+  </div>
+  <div class="interact">
+    <a class="cta" href="#">View</a>
+    <a class="cta" href="#">Book</a>
+  </div>
+</article>
+
+<!-- Card 3 -->
+<article class="card" tabindex="0" aria-label="Product: Wireless Headphones">
+  <img class="media" src="https://images.unsplash.com/photo-1518449007433-5bbb1cbc0f58?q=80&w=1200&auto=format&fit=crop" alt="Wireless headphones on a table" />
+  <input class="expander" id="expander-3" type="checkbox" aria-hidden="true" />
+  <div class="content">
+    <h3 class="title">Wireless Headphones</h3>
+    <p class="meta">30h battery • ANC</p>
+  </div>
+  <a class="toggle cta" href="#expander-3" onclick="return false" aria-controls="expander-3" aria-label="Toggle details">Tap to view details</a>
+  <div class="details" role="region" aria-label="Additional details">
+    <p>Low‑latency Bluetooth with multi‑point pairing and a comfy over‑ear fit. Includes travel case and USB‑C fast charging.</p>
+    <div class="chips">
+      <span class="chip">Bluetooth 5.3</span>
+      <span class="chip">ANC</span>
+      <span class="chip">USB‑C</span>
+    </div>
+  </div>
+  <div class="interact">
+    <a class="cta" href="#">Details</a>
+    <a class="cta" href="#">Add to Cart</a>
+  </div>
+</article>
+
+  </div>
+</body>
+</html>
